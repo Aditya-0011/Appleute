@@ -12,9 +12,14 @@ interface Product {
 const Checkout: React.FC = () => {
   const stripe = useStripe();
   const [items, setItems] = useState<Product[]>([]);
+  const [email, setEmail] = useState("");
 
   const handleAddItem = (item: Product) => {
     setItems([...items, item]);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setItems(items.filter((_, i) => i !== index));
   };
 
   const handleCheckout = async () => {
@@ -26,7 +31,7 @@ const Checkout: React.FC = () => {
       body: JSON.stringify({
         product: items,
         customer: {
-          email: "customer@example.com",
+          email: email,
         },
       }),
     });
@@ -45,12 +50,20 @@ const Checkout: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      <input
+        type="email"
+        placeholder="Enter your email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="px-4 py-2 border rounded w-full max-w-lg mb-4"
+        required
+      />
       <AddItemForm onAddItem={handleAddItem} />
-      <ul className="mt-6 space-y-4 w-full max-w-2xl">
+      <ul className="mt-6 space-y-4 w-80 max-w-7xl">
         {items.map((item, index) => (
           <li
             key={index}
-            className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 bg-white rounded shadow w-full"
+            className="flex flex-row justify-between items-center p-4 bg-white rounded shadow w-full"
           >
             <div className="flex-1">
               <h2 className="text-xl font-bold">{item.name}</h2>
@@ -58,13 +71,19 @@ const Checkout: React.FC = () => {
               <p>Amount: ₹{item.amount}</p>
               <p>Quantity: {item.quantity}</p>
             </div>
+            <button
+              onClick={() => handleRemoveItem(index)}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Remove
+            </button>
           </li>
         ))}
       </ul>
       <button
         onClick={handleCheckout}
         className="mt-6 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        disabled={!stripe || items.length === 0}
+        disabled={!stripe || items.length === 0 || !email}
       >
         Checkout
       </button>

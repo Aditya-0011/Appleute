@@ -28,9 +28,27 @@
 
 ## Project setup
 
-```bash
-$ npm install
-```
+- Install dependencies using
+
+  ```bash
+  $ npm install
+  ```
+
+- Create a `.env` and and add requried fields according to `.env.sample`.
+
+- If on windows setup Stripe CLI using
+
+  ```bash
+  $ stripe login
+  ```
+
+  and enable proxy for localhost using
+
+  ```bash
+  $ stripe listen --forward-to localhost:3000/api/webhook
+  ```
+
+  For other OS refer to Stripe CLI [Docs](https://docs.stripe.com/stripe-cli).
 
 ## Compile and run the project
 
